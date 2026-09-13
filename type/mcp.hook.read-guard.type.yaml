@@ -1,0 +1,27 @@
+# read-guard — the read-before-write floor, as a loadable mediator (plan 2608261532, Phase 5.1).
+#
+# Migrated verbatim-in-behavior from the au-mcp kernel literal (`readBeforeWriteMediator`). It is
+# now a TRUE plugin over the SDK contract: it reads the session's read-time hash from
+# `MediationContext.readHash` (the Phase-4 accessor) instead of a daemon-injected `readView` map,
+# and the current on-disk hash from the always-granted read-only `MediationContext.broker`. So a
+# user could rebuild this exact floor over the same public handles — the invariant of decision
+# 2608261517.
+#
+# SAFE-FLOOR mechanism (unchanged): on an OVERWRITE (`write_file`) of an EXISTING file, deny if the
+# path was never read, or if its current engine hash differs from the read-time hash. A CREATE is
+# exempt (nothing to clobber). `edit_file` self-guards through the mutation channel's `old_string`.
+# An explicit `expected_hash` means the caller does its own CAS, so it passes.
+#
+# A HOOK (shape mediator): no fields, no agent-facing surface. Uses the decide-time read-only
+# broker, so it declares no `tool-access-meta` (that scopes the CONSTRUCTION broker; a mediator's
+# `MediationContext.broker` is always read-only-granted). `critical: true` — a governance floor
+# must fail CLOSED: if its code fails to load, refuse to serve rather than run writes ungated.
+# `tier: floor` — an always-on safety floor, after the `gate` redirect and before `policy` guards.
+extends: mcp.hook::au-mcp-sdk
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/read-guard.ts
+    contractVersion: 0
+    shapes: [mediator]
+    tier: floor
+    critical: true

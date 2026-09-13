@@ -1,0 +1,28 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path of the file to SEED the walk at.
+  path: String
+  #: which way to walk — "out" (outgoing refs, the default), "in" (backlinks), or "both" (per-hop, either direction).
+  direction?: [out, in, both]
+  #: how many hops out from the seed. 0 or absent = the seed node only.
+  depth?: Number{>=0 & integer}
+  #: which reference edge kinds to follow. REQUIRED past depth 1 (an unfiltered deep walk explodes through hubs).
+  kinds?: "[field, contributing, navigational, commit-referent][]"
+  #: scope — "all" (every mounted repo, the default) or "own" (only the editable authoring surfaces).
+  scope?: [own, all]
+  #: cap the node count; the result reports truncation loudly rather than dropping silently.
+  max_nodes?: Number{>=1 & integer}
+  #: splice each node's whole-file content (frontmatter included) onto the result.
+  content?: Boolean
+  #: splice each node's prose body (frontmatter stripped) onto the result.
+  body?: Boolean
+  #: splice each node's resolved typed-instance view (null for a plain note).
+  instance?: Boolean
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-neighborhood.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: a bounded N-hop reference-graph WALK from a seed path — the multi-hop generalization of au_references (one hop) and au_follow (one link). Returns a subgraph { nodes, edges, truncated, truncated_at_depth?, dropped }: each node carries path, depth, repo?, file_kind, bytes/body_bytes, and content?/body?/instance? when requested. path = the file to seed at (required). direction = 'out' (default) | 'in' | 'both'. depth = hops (0 = seed only). kinds = which edge kinds to follow (field | contributing | navigational | commit-referent), REQUIRED past depth 1. scope = 'all' (default) | 'own'. max_nodes caps loudly (truncated + dropped name the cut). content/body/instance = independent enrichment. Use for a dependency closure or a related-notes ripple; a semantically-invalid arg (kinds absent past depth 1, unknown kind, max_nodes 0) returns the daemon's validation error."

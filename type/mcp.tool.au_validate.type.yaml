@@ -1,0 +1,16 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the type name to validate against.
+  typeName: String
+  #: the candidate record as a JSON OBJECT / mapping (e.g. {common-name: Oak, type: plant}), NOT a string.
+  value: opaque
+  #: disambiguate the type by owner repo.
+  repo?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-validate.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: dry-run validate a candidate against a type, no disk write -> { type, unresolved, verdicts[] }, one verdict per mounted identity of the type. Each verdict = { identity, valid (no error diagnostics), diagnostics[], undeclared_fields[] }. undeclared_fields = value keys NOT in that type's shape — ADVISORY (extras are legal under open-world validation), it catches a typo'd extra even when it is not a near-miss of a required field. type = the type name. value = the candidate record as a JSON OBJECT / mapping (e.g. {common-name: Oak, type: plant}), NOT a string. Check 'would this instance be valid?' before writing — the safe pre-mutation loop."

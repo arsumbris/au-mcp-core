@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path to write; parent dirs are created.
+  file_path: String
+  #: the full file contents (overwrites any existing file).
+  content: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-write-file.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Write a file, overwriting if it exists. Absolute path; parent dirs created. Prefer edit_file for partial changes. Writes require an editable member (a consumed dep/discover or read-only cache snapshot rejects)."

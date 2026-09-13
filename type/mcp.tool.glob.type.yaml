@@ -1,0 +1,12 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the glob to match file paths against, e.g. "**/*.ts".
+  pattern: String
+  #: absolute directory to search under; omit to search the whole workspace.
+  path?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-glob.ts
+    contractVersion: 0
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Fast file pattern matching. Returns paths sorted by mtime (newest first)."

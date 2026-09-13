@@ -1,0 +1,11 @@
+# no input. The catalog of fireable UI intents + which are live right now.
+extends: mcp.tool::au-mcp-sdk
+fields: {}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-host-intent-list.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Host: the UI intents you can fire, discovered from the type graph — each with its description, payload fields (name/shape/required + per-field help), and routing. When the au-host app is running it also flags which intents are `live` (handleable by the currently mounted composition) + the active node. Call this BEFORE au_host_intent_fire to pick the right intent and see its payload shape. Returns the static catalog even with no host running."

@@ -1,0 +1,22 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: filter to diagnostics on exactly this file (absolute path).
+  path?: String
+  #: filter to diagnostics under this directory prefix (absolute path).
+  path_prefix?: String
+  #: filter by severity tier; the page defaults to "error" when omitted.
+  severity?: [error, drift, warning, hint]
+  #: filter by diagnostic code (the engine owns ~80 codes; String so it never goes stale here).
+  code?: String
+  #: page size (default 50).
+  limit?: Number{>=1 & integer}
+  #: skip this many entries before the page (a short page means done).
+  offset?: Number{>=0 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-diagnostics.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: diagnostics — a { total, by_severity, by_code } summary (spanning every severity) plus a page of entries (defaults to errors; pass severity to page warning/drift/hint). Scope is your OWN repos by default (a freshly-initialized entry repo shows total 0); to include a dependency's diagnostics, filter by its path / path_prefix. Filters: path / path_prefix / severity / code. Page with limit (default 50) / offset; a short page means done."

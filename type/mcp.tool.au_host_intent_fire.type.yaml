@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the intent type name to fire (from au_host_intent_list); routing is stamped from the type graph, you don't supply it.
+  intent: String
+  #: the intent's fields as a JSON object, e.g. {target: {...}, mode: transient} — see au_host_intent_list for the shape.
+  payload?: opaque
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-host-intent-fire.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Host: fire a UI intent into the LIVE au-host composition (e.g. open-intent to open a target, ui-intent-highlight to flash an element). `intent` = the intent type name; `payload` = its fields as a JSON object (e.g. {target: {...}, mode: transient}). Routing (kind/dispatch) is stamped from the type graph — you don't supply it. Live/EPHEMERAL only: persistent authoring goes through the file tools, not here. Call au_host_intent_list to see available intents + their payload shapes. A clear no-op message when no host is running for this workspace."

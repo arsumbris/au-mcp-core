@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the wikilink to follow, e.g. "note", "note::repo", "note#Heading", "note^blk", "note^^blk".
+  target: String
+  #: absolute path of the file the link appears in (REQUIRED; scopes a bare target repo-local, a ::repo target cross-repo).
+  origin: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-follow.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: RESOLVE ONE WIKILINK STRING — including one you are about to write. This is the authoring check: au_references lists the links a file ALREADY has, au_follow answers 'does this address I composed actually resolve, and what is there?'. Pair it with au_anchors / au_block_ids, which list what a target CAN address. target = the link, e.g. 'note', 'note::repo', 'note#Heading', 'note^blk', or 'note^^blk' (block-referent). origin = the file the link appears in, or would (REQUIRED; scopes a bare target repo-local, a ::repo target cross-repo). Returns { resolved, path?, kind?, span?, repo?, referent?, snippet? } — resolved:false (carrying target/origin, no path) when a valid address resolves to nothing; snippet PEEKS the addressed block/heading so you can confirm you hit the right thing without a second read, and referent (on a ^/^^ target) is true for the block-referent `^^` form. A malformed link returns an 'invalid wikilink target' error."

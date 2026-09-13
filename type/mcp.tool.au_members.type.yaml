@@ -1,0 +1,11 @@
+# no input. The workspace's declared members.
+extends: mcp.tool::au-mcp-sdk
+fields: {}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-members.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: the workspace's declared members as { members: [{ repo, root, scattered, editable, local, role, disabled, git: { tracked, root } }] }, name-sorted. role is entry | edit | discover | dep; editable = an authoring surface (entry/edit) vs a consumed dep/discover; local = a live working tree vs a pinned cache snapshot; disabled = excluded via the workspace's disabled: overlay; git.tracked = whether a git working tree covers the member (git.root names it). Cross-repo orientation — what repos compose this workspace, their role, and where they live on disk."

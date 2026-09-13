@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the wikilink target whose headings to list, e.g. "note" or "note::repo".
+  target: String
+  #: absolute path of the file the link would appear in (scopes a bare target repo-local). Optional.
+  origin?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-anchors.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: every heading in a target file, document order — what a `[[note#Heading]]` link CAN address. The listing dual of following one anchor: use this when AUTHORING a link, au_follow to check one you already have. Returns [{ text, level, span }] — text is the heading as `#anchor` matches it (a trailing `^id` marker excluded), level the depth 1-6. NULL IS NOT EMPTY: an unresolved target returns null (no such file), a resolved file with no headings returns [] — do not read one as the other. origin scopes a bare target repo-local; a `::repo` target is already scoped."

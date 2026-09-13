@@ -1,0 +1,18 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path of the HOST file holding the inline record to extract.
+  file_path: String
+  #: absolute path of the new file to extract into (.md/.markdown/.yaml/.yml); a [[to]] reference is left behind.
+  to: String
+  #: locate the record by byte offset (for a record without a `^:` id); pass EXACTLY ONE of at / block_id.
+  at?: Number{>=0 & integer}
+  #: locate the record by its `^:` id; pass EXACTLY ONE of at / block_id.
+  block_id?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-promote.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Extract an inline ^: record out of a host file into its own file, leaving a [[to]] reference where it sat and rewriting every inbound [[host^id]] referrer to [[to]], as one atomic saga. file_path = the host, to = the new file (absolute; .md/.markdown/.yaml/.yml). Locate the record with EXACTLY ONE of block_id (a record with a ^: id) or at (a byte offset, for one without). The dual of inline. Requires a git-backed member. Routes through the mutation channel; requires an editable member (a consumed dep/discover or read-only cache snapshot rejects)."

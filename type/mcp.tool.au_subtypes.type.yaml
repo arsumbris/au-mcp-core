@@ -1,0 +1,12 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the base type; returns every type-def whose closure includes it (descend a schema tree).
+  base: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-subtypes.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: every type-def whose closure includes the given type (the type-level dual of au_instances_of). type = the base type. Descend a schema tree from it. Each carries its owner repo + the full type-def (parents, sealed, doc, meta_blocks)."

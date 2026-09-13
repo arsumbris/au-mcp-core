@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: page size (default 50).
+  limit?: Number{>=1 & integer}
+  #: skip this many candidate files before the page (use the returned next_offset).
+  offset?: Number{>=0 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-candidates.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: the ranked types each untyped file could claim but doesn't (type-induction / retrofit suggestions). A PAGED SUMMARY + counts by default. Returns { total_files, files_with_candidates, by_type, candidates, aborted_at_load?, offset, limit, truncated, next_offset? } — files_with_candidates is how many actually have suggestions; aborted_at_load:true means a repo's vocabulary failed to load, so the scan is partial. TO SEE MORE: page the knowledge-base scan with limit (default 50) / offset (next_offset returned whenever truncated)."

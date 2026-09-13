@@ -1,0 +1,15 @@
+# The knowledge base's top-level directories. Argless returns the OWN-scoped answer.
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: scope to one repo's dirs; omit for the default (own-scoped) answer.
+  repo?: String
+  #: 'own' (default) = your own repos only; 'all' = every mounted repo (the old workspace-wide answer).
+  scope?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-top-level-dirs.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: the knowledge base's top-level directories — the root subdirectories holding a catalogued file, as [{ name, path, repo, member }]. A 'where do I start browsing?' orientation read; pair with au_children to descend. DEFAULT scope is OWN (your own repos); pass scope:\"all\" for every mounted repo (the old workspace-wide answer), or repo to scope to one."

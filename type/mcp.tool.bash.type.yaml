@@ -1,0 +1,12 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the shell command you would run (recorded as a demand signal — bash does not execute yet).
+  command: String
+  #: intended timeout in ms (recorded; not enforced while bash is unavailable).
+  timeout?: Number{>=0 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-bash.ts
+    contractVersion: 0
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Not available yet (no shell). If you reach for it, name what you could not do without it and what tool you would need — the attempt is recorded so we can build the missing capability. Use the typed gate tools meanwhile."

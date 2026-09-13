@@ -1,0 +1,23 @@
+# mcp.hook.repo-overview — a first-party SESSION-START hook (decision 2609020302).
+#
+# At session-open it injects a REPOSITORY OVERVIEW: one block per mounted workspace member — a repo
+# link, the repo's README `tldr`, and a link to its full README. Recomputed per session against LIVE
+# graph state (the mounted member set + each README's tldr), unlike a static mcp.inject.
+#
+# CONFIG-LESS + always-on: it takes no `hookConfig`, so the daemon runs it ONCE with `config`
+# undefined. It injects whenever it is not excluded by an agent-profile's `hooks` whitelist (a
+# non-critical hook runs when the whitelist is absent, or when the whitelist lists this hook's id).
+#
+# tier: policy — an orientation notice, not a safety floor. NOT critical: a broken overview must
+# never refuse the session (best-effort; the daemon isolates a throwing session-start hook).
+# shapes: [session-start]. Reads the graph via the ctx read-only broker, so no tool-access-meta.
+#
+# The one-liner per repo is the README's `tldr` field (au.engine.readme), falling back to the repo
+# name when a README or its tldr is absent.
+extends: mcp.hook::au-mcp-sdk
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/repo-overview.ts
+    contractVersion: 0
+    shapes: [session-start]
+    tier: policy

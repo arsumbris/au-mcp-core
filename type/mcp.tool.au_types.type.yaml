@@ -1,0 +1,18 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: scope to one repo's type-defs; omit for the whole workspace.
+  repo?: String
+  #: return the FULL WireTypeDef per type instead of a light summary row (heavy — prefer scoping/paging).
+  detail?: Boolean
+  #: page size (default 50).
+  limit?: Number{>=1 & integer}
+  #: skip this many types before the page (use the returned next_offset).
+  offset?: Number{>=0 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-types.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: type-defs across the workspace (owner-deduped, name-sorted). A PAGED SUMMARY by default — one light row per type (name, hash, parents, sealed, doc). Returns { total, by_repo, types, offset, limit, truncated, next_offset? }. TO SEE MORE: page a large workspace with limit (default 50) / offset (next_offset returned whenever truncated); scope with repo; pass detail:true for the FULL WireTypeDef per type (heavy — prefer scoping/paging); or au_type {name} for one type's full def."

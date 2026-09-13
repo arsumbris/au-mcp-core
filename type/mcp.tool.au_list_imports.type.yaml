@@ -1,0 +1,11 @@
+# no input. The workspace's discovered cross-repo import set.
+extends: mcp.tool::au-mcp-sdk
+fields: {}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-list-imports.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: the workspace's cross-repo import set — one record per (importer, imported peer identity) as [{ importer, name, owner, hash }]. The fold-axis `::repo` types each repo authors (a `type: foo::repo` claim/parent/use/meta), NOT a field-shape `foo::repo*` reference. Cross-repo orientation: which repos import which peer types."

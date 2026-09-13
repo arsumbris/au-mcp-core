@@ -1,0 +1,14 @@
+# Schema-12 repo identity + deps (au.engine.repo).
+type: au.engine.repo::au-engine
+name: au-mcp-core
+description: the bundled baseline plugin package for the au-mcp kernel. Ships the default
+  agent surface (file ops, engine reads, intents) plus the always-on floors (read-guard,
+  tool-precondition) and the opt-in native-tool redirect, ALL as true plugins over au-mcp-sdk. Realises
+  decision 2608261517 (the kernel holds only the mechanism; tools + policy are plugins).
+  OWNS the mcp.tool.<tool> leaf defs migrated from au-mcp + the mcp.hook floor / redirect defs.
+deps:
+  # repo.yaml deps are TYPE-dependencies only (cross-repo `::repo` type references, folded into
+  # the closure-hash). au-mcp-core's type-defs extend `mcp.tool::au-mcp-sdk` — that is the one
+  # type-dep. The au-engine-sdk dependency is a PACKAGE dep (a JS util, parseWikilinkInner); it
+  # lives in package.json, NOT here — no au-engine-sdk TYPE is referenced.
+  - name: au-mcp-sdk

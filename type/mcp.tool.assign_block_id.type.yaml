@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path of the file holding the entity to address.
+  file_path: String
+  #: a byte offset (from a wire-served span) inside the inline record / markdown block to assign a `^:` id to.
+  at: Number{>=0 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-assign-block-id.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Assign an engine-generated `^:` block id to the addressable entity (inline record or markdown block) enclosing byte offset `at`. at = a byte offset from a wire-served span (au_references / au_resolved body_events / au_instances). Returns { id, ref } — ref is the [[target^id]] handle (resolve it with au_follow). Idempotent on an already-addressed record; an offset enclosed by no record/block rejects. Routes through the mutation channel; requires an editable member (a consumed dep/discover or read-only cache snapshot rejects)."

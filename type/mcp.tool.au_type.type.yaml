@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the type-def name to fetch (returns the WireTypeDef, or null if absent).
+  name: String
+  #: disambiguate a borrowed copy by owner repo.
+  repo?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-type.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: one type-def by name -> the WireTypeDef, or null if absent. type = the type-def name. Optional repo disambiguates a borrowed copy. Cheaper than au_types + filter when you know the name."

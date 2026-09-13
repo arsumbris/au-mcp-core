@@ -1,0 +1,12 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path to classify (typed instance / type-def / plain note).
+  path: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-typed.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: is a path a typed instance, a type-def, or a plain note? Returns { typed, kind, claim?, resolves?, closure? } — kind is \"instance\" | \"type-def\" | \"unclassified\" (plain note) | ... Use before au_resolved / au_references, which return null / [] on a non-instance."

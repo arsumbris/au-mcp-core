@@ -1,0 +1,28 @@
+# mcp.hook.instance-count-notice — a first-party SESSION-START hook (decision 2609020302).
+#
+# At session-open it counts instances of configured types and injects a notice when a count
+# exceeds its threshold — the canonical "if there are more than N instances of type T, inject
+# some context". Recomputed per session (live graph state), unlike a static mcp.inject.
+#
+# INERT until configured: it reads its per-session config via SessionLaunch.config (the
+# AU_MCP_PLUGIN_CONFIG channel, keyed by this hook's id `mcp.instance-count-notice`), shaped
+# `{ checks: [{ type, threshold, message? }] }`. No config -> no inject, near-zero cost.
+#
+# tier: policy — a notice, not a safety floor. NOT critical: a broken notice must never refuse
+# the session (best-effort, the daemon isolates a throwing session-start hook). shapes:
+# [session-start]. Reads the graph via the ctx read-only broker, so no tool-access-meta.
+extends: mcp.hook::au-mcp-sdk
+# CONFIG fields (fields-are-config, decision 2609020302). SINGULAR — one check per instance; author
+# N instances for N checks. `forType` is a `type*` def-ref: the engine validates the value names a
+# real type-def (a typo / renamed type surfaces as a diagnostic on the profile), and it rides the
+# wire as a wikilink the hook reduces to the bare name for `instances_of`.
+fields:
+  forType: type*
+  threshold: Number{>=0 & integer}
+  message?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/instance-count-notice.ts
+    contractVersion: 0
+    shapes: [session-start]
+    tier: policy

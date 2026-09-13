@@ -1,0 +1,12 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path; returns { repo, root, editable, local, role } of the declared member that owns it, or null.
+  path: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-resolve-member.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: which declared member owns a path -> { repo, root, editable, local, role }, or null when under no member. path is absolute. role/editable/local as in au_members (editable && local = a write lands in an editable live tree). Answers 'which repo is this file in, and is it editable?' for cross-repo work + write-scoping."

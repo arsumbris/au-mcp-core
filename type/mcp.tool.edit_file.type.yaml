@@ -1,0 +1,18 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path to the file to edit.
+  file_path: String
+  #: the exact text to replace; must match verbatim and be unique unless replace_all.
+  old_string: String
+  #: the replacement text.
+  new_string: String
+  #: replace every occurrence instead of requiring old_string to be unique.
+  replace_all?: Boolean
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-edit-file.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Exact string replacement in a file. old_string must match (and be unique unless replace_all). Writes require an editable member (a consumed dep/discover or read-only cache snapshot rejects)."

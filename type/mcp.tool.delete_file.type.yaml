@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path of the file to remove.
+  file_path: String
+  #: read-before-write guard — the file's current hash; a mismatch rejects without deleting.
+  expected_hash?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-delete-file.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "DESTRUCTIVE: remove a file; the rebuild drops its node from the graph. Absolute path. expected_hash is the read-before-write guard (a mismatch rejects without deleting); deleting an absent file rejects. Routes through the one governed mutation channel — no direct fs. Writes require an editable member (a consumed dep/discover or read-only cache snapshot rejects)."

@@ -1,0 +1,16 @@
+# The container-op dispatcher (decision 2607161146): one tool carries the closed,
+# host-defined verb set (activate now; extract/inject/split later ride the same tool).
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the layout verb — today only "activate" (reveal/focus a pane); future verbs ride this same tool.
+  op: String
+  #: the target pane id (from au_host_snapshot's node ids); required by verbs that target a pane.
+  paneId?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-host-pane-op.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Host: perform a live LAYOUT operation on the mounted au-host composition. `op` is the verb — today only \"activate\" (reveal/focus a pane by id). `paneId` names the target pane; get pane ids from au_host_snapshot (each node's `id`). Returns {done} or {done:false, reason} (e.g. no container holds the pane). Live/ephemeral only; needs the au-host app running. A single dispatcher — future layout verbs ride this same tool, no new tools."

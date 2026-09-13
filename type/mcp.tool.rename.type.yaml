@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path of the file to move (not a type-def file — use rename_type).
+  file_path: String
+  #: absolute destination path (same repo); every inbound reference is rewritten to follow.
+  to: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-rename.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Move a file and rewrite EVERY inbound reference to follow, as one atomic saga. file_path + to are absolute. Same-repo only (a cross-repo `to` rejects); refuses a type-def file (use rename_type). Rejects if `to` exists, collides case-insensitively, or a touched path is dirty at HEAD. Preserves each referrer's link spelling + fragments. Routes through the mutation channel; requires an editable member (a consumed dep/discover or read-only cache snapshot rejects)."

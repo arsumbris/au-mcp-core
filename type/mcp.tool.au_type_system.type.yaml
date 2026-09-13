@@ -1,0 +1,15 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: one atom name to fetch (or the diagnostic-codes catalog); omit for the map (moc + atom names).
+  name?: String
+  #: fetch the WHOLE reference bundle (moc + every atom except the diagnostic-codes catalog) in one call — large.
+  full?: Boolean
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-type-system.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "The type-system reference (typed `doc` atoms from the mounted au-mcp-type-knowledge package). No arg → the map (moc + atom names); name → one atom (or the diagnostic-codes catalog); full:true → the whole reference (large — prefer map-then-drill, or a task guide via au_guide)."
+    guidance: "Before authoring or reasoning about type-defs — writing a type: claim, defining a type, inducing a schema — learn the type system here first. Don't guess the type-def syntax."

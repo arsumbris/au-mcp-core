@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the type-def's current name (bare, or ::repo-qualified to pick an owner) — a TYPE NAME, not a path.
+  old_name: String
+  #: the owner's new type name (bare); the def file + both reference surfaces cascade.
+  new_name: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-rename-type.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Rename a type-def: move its def file (its name IS the filename) and cascade BOTH reference surfaces atomically — the type-name references in the owning repo (type: claims, sealed: branches, slot shapes, colon-prefix keys, body use:, meta type:) and the wikilinks to the def file across the mounted set. Takes TYPE NAMES, not a file path: old_name is bare or ::repo-qualified (to pick an owner); new_name is the owner's new name (bare). What au_type_tree / au_types show. Routes through the mutation channel; requires an editable member (a consumed dep/discover or read-only cache snapshot rejects)."

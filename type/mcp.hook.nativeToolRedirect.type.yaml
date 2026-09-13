@@ -1,0 +1,30 @@
+# redirect — the native-tool allowlist enforcer, as a loadable mcp.hook mediator
+# (plan 2608261532, Phase 5.3). Migrated from au-mcp-redirect, which retires.
+#
+# Reads MediationContext.launch.nativeToolAllowlist — the tri-state native whitelist:
+#  - absent -> INERT (all native tools allowed; the hard default).
+#  - present (`[]` or `[names]`) -> enforce: allow a native tool iff it is listed; deny every other
+#    native and point the agent at its gate equivalent. A whitelist with NO exceptions — nothing is
+#    implicitly allowed.
+# The au-mcp gate tools (matched by gatePrefix) stay available regardless — they are the gate
+# surface, not natives. Inert without a gatePrefix (no gate to redirect to), preserving the kernel's
+# former flag-and-gatePrefix activation.
+#
+# A HOOK (shape mediator): no fields, no agent-facing surface. It reads only launch facts +
+# ctx.nativeTools (no engine), so no tool-access-meta. `tier: gate` — decides FIRST (outermost):
+# a denied native short-circuits before the read-before-write / tool-precondition floors (tier
+# `floor`) run. `critical: true` — a governance floor fails CLOSED on a load failure.
+extends: mcp.hook::au-mcp-sdk
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/native-tool-redirect.ts
+    contractVersion: 0
+    shapes: [mediator]
+    tier: gate
+    critical: true
+  # It points a denied native tool at its GATE equivalent, so those gate tools must be mounted for the
+  # redirect to be useful. Declared so requiredScope-check surfaces a gap if a profile hides one (advisory
+  # only; drives no behaviour). First-party dogfood of required-scope-meta (decision 2609071712).
+  - type: required-scope-meta::au-mcp-sdk
+    requires:
+      ["[[mcp.tool.read_file_pinned]]", "[[mcp.tool.write_file]]", "[[mcp.tool.edit_file]]", "[[mcp.tool.bash]]", "[[mcp.tool.glob]]", "[[mcp.tool.grep_files]]"]

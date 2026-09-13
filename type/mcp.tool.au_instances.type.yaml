@@ -1,0 +1,16 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: return each instance's full introspection (effective_shape, collisions, values, body_events) — heavy; prefer au_resolved {path} for one.
+  detail?: Boolean
+  #: page size (default 100).
+  limit?: Number{>=1 & integer}
+  #: skip this many instances before the page.
+  offset?: Number{>=0 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-instances.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: an INDEX of EVERY typed instance in the knowledge base — one light row per instance (file, claim, closure). The knowledge-base-wide dual of au_instances_of (which is per-type). A PAGED SUMMARY by default. Returns { count, resolved, aborted_at_load?, instances, offset, limit, truncated, next_offset? } — count is parsed instances, resolved the number with a resolved value layer (count can exceed it when a broken vocabulary left some unresolved, which aborted_at_load flags); instances is the paged set. TO SEE MORE: page with limit (default 100) / offset (next_offset returned whenever truncated); pass detail:true for each instance's FULL introspection (effective_shape, collisions, effective_values, body_events — heavy, prefer au_resolved {path} for one)."

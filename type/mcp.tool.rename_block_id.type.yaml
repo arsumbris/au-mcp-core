@@ -1,0 +1,16 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path of the host file holding the inline `^:` record.
+  file_path: String
+  #: the record's current block-id (inline `^:` records only; a body-marker ^id rejects).
+  block_id: String
+  #: the new block-id (must be free in the host's id namespace); every filtered referrer is rewritten.
+  to_block_id: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-rename-block-id.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Rename an inline ^: record's block-id in its host and rewrite every referrer filtered to that id ([[host^block_id]] -> [[host^to_block_id]], local [[^block_id]] -> [[^to_block_id]]), as one atomic saga. Scope is inline ^: RECORDS only — a body-marker ^id (paragraph/heading/fence) rejects. to_block_id must be free in the host's id namespace. Requires a git-backed member. Routes through the mutation channel; requires an editable member (a consumed dep/discover or read-only cache snapshot rejects)."

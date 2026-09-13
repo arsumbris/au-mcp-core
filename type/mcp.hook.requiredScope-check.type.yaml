@@ -1,0 +1,22 @@
+# mcp.hook.requiredScope-check — a first-party SESSION-START hook (decision 2609071712).
+#
+# At session-open it walks every mounted mcp.tool / mcp.hook def that declares `required-scope-meta`,
+# and for each required ref checks the kernel-resolved `ctx.scope`. It injects one line per ref that is
+# NOT MOUNTED (its def does not resolve in this workspace) or MOUNTED BUT NOT ACTIVE (excluded by the
+# profile's tool/skill allowlist). Turns a silent late failure into a legible notice at open.
+#
+# CONFIG-LESS + always-on. tier `policy`, NOT critical (a broken notice must never refuse the session;
+# the daemon isolates a throwing session-start hook). shapes: [session-start]. Reads subtypes via the
+# ctx read-only broker; consults `ctx.scope`, so NO allowlist re-derivation here.
+#
+# v1 scope: TOOLS + HOOKS. `mcp.tool` / `mcp.hook` subtypes carry the meta at the type level. Skills are
+# INSTANCES of the single `mcp.skill` type, so a per-skill type-meta does not apply — a skill `requires`
+# mechanism (an instance field, not a meta) is a follow-up. Type / member refs resolve through `ctx.scope`
+# too (members) or fall through to NOT MOUNTED when absent from every scope set.
+extends: mcp.hook::au-mcp-sdk
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/requiredScope-check.ts
+    contractVersion: 0
+    shapes: [session-start]
+    tier: policy

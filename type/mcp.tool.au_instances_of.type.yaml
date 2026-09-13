@@ -1,0 +1,20 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the type name to list instances of (bare matches every same-named identity across repos; name::repo picks one owner).
+  ofType: String
+  #: restrict which origins count — any of "file" (whole files) / "nested" (inline records) / "meta" (type-def meta); omit for all.
+  origins?: "[file, nested, meta][]"
+  #: return each instance's full resolved fields (heavy — avoid for large/append-only types).
+  resolve?: Boolean
+  #: page size (default 100).
+  limit?: Number{>=1 & integer}
+  #: skip this many instances before the page.
+  offset?: Number{>=0 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-instances-of.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: an INDEX of a type's instances whose closure contains the type — each row is path + claim + the matched-type identity (name, hash, type_owners, claimed vs inherited) + its origin. Instances are ALL origins by default: whole files AND nested inline records (e.g. an action inside a plan's phases) AND type-def meta; a nested/meta row carries origin + a locator (field_path / block_id) to navigate to it within its file, so several records in one file stay distinct. Narrow with origins (e.g. [\"file\"] to skip nested). A bare type matches every same-named identity across repos; qualify as type::repo for one. Paged with limit (default 100) / offset; pass resolve:true for each instance's full fields (heavy — avoid for large/append-only types like session-log)."

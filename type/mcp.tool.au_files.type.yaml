@@ -1,0 +1,18 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: only this member's files. Absent spans every mounted member.
+  repo?: String
+  #: "all" (DEFAULT — a wikilink into a dependency is legal) or "own" (your own repos).
+  scope?: [all, own]
+  #: page size.
+  limit?: Number{>=1 & integer}
+  #: page offset.
+  offset?: Number{>=0 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-files.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: every catalogued file, path-sorted — the RESOLVABLE WIKILINK TARGET SET, i.e. what `[[` can reach. Returns [{ path, stem, repo, kind }]. INCLUDES ASSETS (images, binaries), which no other read surfaces: every other listing derives from PARSED files, so the unread half of a knowledge base is otherwise invisible (measured on a real corpus: 138 of 304 files were assets). CAUTION — this `kind` is the PARSE vocabulary \"instance\" | \"type-def\" | \"note\" | \"asset\", which is NOT au_typed's `kind` (\"instance\" | \"type-def\" | \"unclassified\"); \"note\" here means a parsed untyped file and \"asset\" an unread one. DEFAULT scope is ALL (inverted from au_top_level_dirs, which defaults to own) — a wikilink into a dependency is legal, so the whole set is what exists to link against. Cheap: a projection of the held catalogue, no walk and no disk read."

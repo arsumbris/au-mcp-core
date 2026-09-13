@@ -1,0 +1,11 @@
+# no input. A snapshot of the live au-host composition (introspect over the socket).
+extends: mcp.tool::au-mcp-sdk
+fields: {}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-host-snapshot.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Host: a snapshot of the LIVE au-host composition — the mounted projection tree (each node: id, its projection type, kind closure, the intent `type`s it handles, children) plus the focus (the active node). Your 'where am I in the UI' orientation read: what is mounted where, before firing an intent or planning a layout change. Needs the au-host app running; a clear message otherwise."

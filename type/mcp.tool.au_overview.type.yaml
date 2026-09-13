@@ -1,0 +1,18 @@
+# The up-front orientation map. Argless returns the OWN-scoped answer. Aggregates the
+# workspace-wide form of reads the agent already has (members, top_level_dirs, type_counts,
+# diagnostic_counts, hubs) plus whole-graph health scalars (graph_shape) into one cheap call to
+# load FIRST, then drill through those reads.
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: scope to one repo; omit for the default (own-scoped) answer.
+  repo?: String
+  #: 'own' (default) = your own repos only; 'all' = every mounted repo.
+  scope?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-overview.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: the up-front orientation map — the ONE cheap read to load FIRST, then drill through the individual reads. Aggregates { members (au_members), top_level_dirs (au_top_level_dirs), type_counts (au_types counts), diagnostic_counts (au_diagnostics counts), hubs (au_hubs — the most-referenced files), graph_shape (whole-graph HEALTH scalars: node_count / edge_count, components + largest_component, orphans {no_inbound, isolated}, degree histograms, density — the 'N disconnected islands, M orphans' signal; raw facts, no thresholds) }. DEFAULT scope is OWN (your own repos); pass scope:\"all\" for every mounted repo, or repo to scope to one. Echoes the resolved repo/scope so you drill into a field with the SAME args. NOTE: EVERY field follows the resolved scope, type_counts included (own by default) — so a repo that authors no type-defs shows type_counts {total:0, by_repo:{}}, which means 'no types defined here', NOT a broken index (the echoed scope confirms which); pass scope:\"all\" to count all mounted repos. Use the echoed repo/scope when drilling into a field. graph_shape is best-effort — absent if the engine is too old to serve it."

@@ -1,0 +1,21 @@
+# The most-referenced files over the typed reference graph — the "start here" signal a
+# generic search can't give. Argless returns the OWN-scoped, engine top-N answer. Promoted
+# out of overview (schema 17); overview.hubs carries the same default-ranked, bounded slice.
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: scope to one repo; omit for the default (own-scoped) answer.
+  repo?: String
+  #: 'own' (default) = your own repos only; 'all' = every mounted repo.
+  scope?: String
+  #: page size; omit for the engine's top-N (the bound overview.hubs carries).
+  limit?: Number{>=1 & integer}
+  #: page offset into the ranking; omit to start at the top.
+  offset?: Number{>=0 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-hubs.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: the most-referenced files over the typed reference graph — the 'start here' signal a generic search can't give, as [{ path, repo, kind, refs_structural, refs_navigational, refs_total }]. Ranked refs_structural (inbound edges filling a typed slot) desc, then refs_total; a file with NO inbound edges never appears. DEFAULT scope is OWN (your own repos); pass scope:\"all\" for every mounted repo, or repo to scope to one (a repo pin flips the default to all). Scoping happens BEFORE ranking + truncation, so a big dependency can't crowd out your own files. limit omitted = the engine's top-N; offset pages into the ranking. Same slice overview.hubs carries."

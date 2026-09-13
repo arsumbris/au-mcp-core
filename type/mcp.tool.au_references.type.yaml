@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path of the file whose wikilink references to return.
+  path: String
+  #: direction — "out" (outgoing links) or "in" (backlinks).
+  which: [out, in]
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-references.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: wikilink references for a file. which = 'out' (outgoing) | 'in' (backlinks). 'out' returns EVERY outgoing edge from ONE call — frontmatter first (declaration order), then body (source order) — each CLASSIFIED: surface = 'frontmatter' | 'body'; kind = 'field-reference' (a typed slot) | 'field-string-wikilink' (a link inside a plain string field) | 'contributing' | 'navigational' (a body link) | 'unknown' (a frontmatter link whose SLOT could not be resolved, so its kind is genuinely undecidable — not a guess); field names the frontmatter key; source_block_id the enclosing block. Each edge also carries target, resolved (absolute path or absent when dangling), repo, span, and anchor on a #Heading link. A block-id target is served as block_id: { id, referent } — id is the block; referent:true is the doubled `[[file^^id]]` (the block's typed VALUE fills the slot), referent:false a navigational `[[file^id]]` jump. (Block DECLARATION ids stay bare strings.)"

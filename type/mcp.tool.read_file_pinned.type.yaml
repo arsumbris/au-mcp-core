@@ -1,0 +1,16 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path of the file to read.
+  file_path: String
+  #: 1-based line to start from; omit to read from the top.
+  offset?: Number{>=1 & integer}
+  #: max number of lines to read from offset; omit to read to the end.
+  limit?: Number{>=1 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-read-file-pinned.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Read a file through the engine's governed `content` read (the working tree, not native fs). Returns cat -n numbered lines, then a footer naming the commit the read was anchored at (the file's repo HEAD) and the content hash — so you can pin the exact version you read as [[path::@commit]] with a SUBSEQUENT write; the read itself records nothing. For ordinary reads, prefer your native read tool. Absolute path; optional 1-based line offset + limit."

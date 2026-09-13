@@ -1,0 +1,28 @@
+# tool-precondition — the read-precondition floor, as a loadable mcp.hook mediator
+# (plan 2608261532, Phase 5.2). Migrated from au-mcp-redirect (where it lived beside the native-tool redirect).
+#
+# A tool declares `read-precondition-meta { onFiles: [[guide]] }` on its own `mcp.tool` subtype.
+# This floor gates a gate-tool call on the agent having READ (or been SERVED) every declared file.
+# On a call whose tool has a precondition, if any required path is not yet in the session read/
+# served view, DENY with a pointer to read it first (decision 2607030037). Spoof-resistant: the
+# read-view is populated only from observed read CALLS + declared serves-contracts, never response
+# text.
+#
+# TRUE-PLUGIN / non-privilege (decision 2608261517, G2): the floor DERIVES its own base-tool ->
+# required-paths map from the read-only broker — enumerate `mcp.tool` subtypes, read each
+# `read-precondition-meta.onFiles`, resolve each wikilink via `resolve_target` — exactly as an
+# external user would. Nothing is handed to it that a user plugin cannot fetch. It reads the
+# session read/served view via `MediationContext.hasRead` (the Phase-4 accessor).
+#
+# A HOOK (shape mediator): no fields, no agent-facing surface. Uses the decide-time read-only
+# broker (so no `tool-access-meta`) + the workspace captured at construction. `critical: true` —
+# a governance floor fails CLOSED on a load failure. `tier: floor` — an always-on safety floor,
+# after the `gate` redirect and before `policy` guards (e.g. au-provenance's, au-workflow's).
+extends: mcp.hook::au-mcp-sdk
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-precondition.ts
+    contractVersion: 0
+    shapes: [mediator]
+    tier: floor
+    critical: true

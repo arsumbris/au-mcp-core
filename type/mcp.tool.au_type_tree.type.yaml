@@ -1,0 +1,11 @@
+# no input. The workspace-wide cross-repo parent/child forest ({ roots, nodes }).
+extends: mcp.tool::au-mcp-sdk
+fields: {}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-type-tree.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: the workspace type tree — the cross-repo parent/child forest as { roots, nodes }, each node { repo (owner), name, hash, parents, children }. The agent-friendly shape for seeing how kinds relate while inducing a schema."

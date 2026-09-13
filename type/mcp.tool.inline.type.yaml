@@ -1,0 +1,16 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: absolute path of the file to fold in + DELETE (must have no non-empty body).
+  file_path: String
+  #: absolute path of the HOST file to fold file_path into as an inline `^:` record.
+  into: String
+  #: a byte offset in `into` landing on the [[file_path]] reference; required only when `into` references file_path more than once.
+  at?: Number{>=0 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-inline.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "The dual of promote: fold file `file_path` into host `into` as an inline ^:id record holding file_path's frontmatter, rewrite the other [[file_path]] referrers, and DELETE file_path — one atomic saga. file_path must have no non-empty body. at (a byte offset in `into` landing on the [[file_path]] reference to host) is required only when `into` references file_path more than once. Requires a git-backed member. Routes through the mutation channel; requires an editable member (a consumed dep/discover or read-only cache snapshot rejects)."

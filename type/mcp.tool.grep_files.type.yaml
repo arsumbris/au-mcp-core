@@ -1,0 +1,24 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the regex to search file contents for (JS RegExp syntax).
+  query: String
+  #: absolute directory to search under; omit to search the whole workspace.
+  path?: String
+  #: a glob restricting which files are searched, e.g. "**/*.ts"; omit to search all.
+  glob?: String
+  #: match case-sensitively; default is case-insensitive.
+  case_sensitive?: Boolean
+  #: output mode — "content" (default: path:line:match), "files" (matching paths only), "count" (path:count per file).
+  mode?: String
+  #: page size — max results returned (default 500). Pair with offset to page through a large result set.
+  limit?: Number{>=1 & integer}
+  #: skip this many results before the page (default 0); the footer reports the next offset when more remain.
+  offset?: Number{>=0 & integer}
+  #: truncate each match line to this many chars in "content" mode (default 300); stops one very long line overflowing the token cap.
+  max_line_length?: Number{>=1 & integer}
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-grep-files.ts
+    contractVersion: 0
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Search file contents for a regex (param: query). Default returns path:line:match, case-insensitive, each line truncated to 300 chars, up to limit=500 results. Use mode=files for matching paths only, mode=count for per-file counts. Page with limit + offset (the footer reports the next offset); max_line_length overrides truncation."

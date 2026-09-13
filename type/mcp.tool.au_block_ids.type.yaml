@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the wikilink target whose block ids to list, e.g. "note" or "note::repo".
+  target: String
+  #: absolute path of the file the link would appear in (scopes a bare target repo-local). Optional.
+  origin?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-au-block-ids.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Engine: every addressable block id in a target file, span-sorted — what a `[[note^id]]` link CAN address. Closes the gap between au_assign_block_id (MINTS an id) and au_follow (resolves one): nothing else LISTS them, so authoring a block link meant already knowing the id. Returns [{ id, kind, type_claim, span }] — id is bare, WITHOUT its `^` sigil; type_claim is [] for a marker or claim-less record. TYPEDNESS RIDES kind, there is no separate flag: kind is \"record\" (a frontmatter inline record's `^:`) | \"typed_block\" (a `[:field]` fence) | \"marker\" (a bare `^id`); a DOUBLED `[[file^^id]]` block-referent needs a TYPED value, so it is satisfied by record and typed_block but NEVER by marker — filter on kind when completing `^^`. Both id surfaces are in one stream (frontmatter `^:` records AND body occurrences); a text scan over the body catches only the bare markers, which is the point of this read. Every OCCURRENCE is listed, duplicates included, so the array is NOT id-unique. NULL IS NOT EMPTY: unresolved target returns null, a resolved file with no ids returns []."
