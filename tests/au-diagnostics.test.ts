@@ -1,5 +1,5 @@
 // au_diagnostics as a LOADABLE plugin — ported from au-mcp's plugins.test.ts as the tool
-// moved out of the kernel (plan 2608261532 Phase 2). Same behaviour, exercised through the
+// moved out of the kernel. Same behaviour, exercised through the
 // createPlugin(ctx) -> { invoke } shape over a mock PluginBroker (no in-process privilege).
 
 import { describe, it, expect } from 'vitest'

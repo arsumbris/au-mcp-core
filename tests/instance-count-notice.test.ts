@@ -4,19 +4,26 @@ import type { PluginContext, PluginBroker, SessionStartContext, EngineFrame } fr
 
 // The instance-count-notice session-start hook (decision 2609020302). It receives ONE instance's
 // typed config from the daemon (per-instance, decision 2609021429 — no more `{ checks: [] }` blob),
-// counts instances_of the configured type over a read-only broker, and injects a notice when the
-// count exceeds the threshold. `forType` rides as a `type*` def-ref wikilink the hook reduces to the
-// bare name. These tests drive onSessionStart(ctx, config) over a fake broker.
+// reads `instance_counts` (the cheap count-dual of instances_of, not the row list) over a read-only
+// broker, sums the `by_type` rows matching the configured type, and injects a notice when the count
+// exceeds the threshold. `forType` rides as a `type*` def-ref wikilink the hook reduces to the bare
+// name. These tests drive onSessionStart(ctx, config) over a fake broker.
 
+// A fake `instance_counts` read: `counts` maps a bare type name to its instance count, projected onto
+// the identity-keyed `by_type` view. An absent type is simply not in `by_type` (count 0), the way the
+// engine returns it — there is no per-type "unknown type" error on this read.
 function fakeBroker(counts: Record<string, number>, opts: { available?: boolean } = {}): PluginBroker {
   return {
     available: () => opts.available ?? true,
-    read: async (op: string, args?: Record<string, unknown>): Promise<EngineFrame> => {
-      if (op !== 'instances_of') return { result: [] }
-      const type = String((args as { type?: unknown })?.type)
-      const n = counts[type]
-      if (n === undefined) return { type: 'error', result: null } // unknown type -> engine error
-      return { result: Array.from({ length: n }, (_, i) => ({ path: `${type}-${i}.md` })) }
+    read: async (op: string): Promise<EngineFrame> => {
+      if (op !== 'instance_counts') return { result: null }
+      const by_type = Object.entries(counts).map(([name, count], i) => ({
+        name,
+        hash: `h${i}`,
+        type_owners: ['au-mcp-core'],
+        count,
+      }))
+      return { result: { aborted_at_load: false, total: by_type.reduce((s, r) => s + r.count, 0), by_type } }
     },
     mutate: async () => ({}),
   }
@@ -52,9 +59,33 @@ describe('instance-count-notice session-start hook', () => {
     expect(r).toEqual({ inject: ["⚠ 5 instances of type 'task' (over threshold 3)."] })
   })
 
-  it('reduces a ::repo-qualified def-ref to the bare type name for instances_of', async () => {
+  it('reduces a ::repo-qualified def-ref to the bare type name matched against the counts table', async () => {
     const r = await hook.onSessionStart!(ctxWith(fakeBroker({ task: 5 })), { forType: '[[task::au-mcp-core]]', threshold: 3 })
     expect(r).toEqual({ inject: ["⚠ 5 instances of type 'task' (over threshold 3)."] })
+  })
+
+  it('sums the counts of every identity sharing the bare type name', async () => {
+    // Two cross-repo identities of `task` -> two by_type rows; the bare count is their sum (7).
+    const broker: PluginBroker = {
+      available: () => true,
+      read: async (op: string): Promise<EngineFrame> =>
+        op === 'instance_counts'
+          ? {
+              result: {
+                aborted_at_load: false,
+                total: 7,
+                by_type: [
+                  { name: 'task', hash: 'a', type_owners: ['au-mcp-core'], count: 5 },
+                  { name: 'task', hash: 'b', type_owners: ['other'], count: 2 },
+                  { name: 'plan', hash: 'c', type_owners: ['au-mcp-core'], count: 9 },
+                ],
+              },
+            }
+          : { result: null },
+      mutate: async () => ({}),
+    }
+    const r = await hook.onSessionStart!(ctxWith(broker), { forType: '[[task]]', threshold: 3 })
+    expect(r).toEqual({ inject: ["⚠ 7 instances of type 'task' (over threshold 3)."] })
   })
 
   it('injects nothing when the count is at or below the threshold', async () => {
@@ -69,8 +100,8 @@ describe('instance-count-notice session-start hook', () => {
     expect(r).toEqual({ inject: ['4 task over 1'] })
   })
 
-  it('skips on an unknown type or a down engine, never throwing', async () => {
-    // unknown type -> engine 'error' -> no inject
+  it('skips on an absent type or a down engine, never throwing', async () => {
+    // absent type -> no by_type row -> count 0 -> no inject (0 > 0 is false)
     expect(await hook.onSessionStart!(ctxWith(fakeBroker({})), { forType: '[[ghost]]', threshold: 0 })).toBeUndefined()
     // engine unavailable -> no-op
     expect(

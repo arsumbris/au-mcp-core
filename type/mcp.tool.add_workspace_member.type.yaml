@@ -1,0 +1,16 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the member repo name to add to the workspace composition.
+  name: String
+  #: the target list — "edit" (an editable authoring surface) or "discover" (mounted for type-discovery, consumed).
+  role: String
+  #: the editable member root to author; omit to author the served entry's workspace.yaml.
+  root?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-add-workspace-member.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Add a member to a workspace's edit: or discover: list (role is \"edit\" | \"discover\"), authoring .arsumbris/workspace.yaml. When the file is ABSENT it is CREATED self-complete (the containing repo seeded into edit:, plus this member). A byte-splice — comments survive. root names the editable member to author (omit for the served entry). Rejects a member already in EITHER list (use set_workspace_member_role to change a role), the containing repo into discover, or a non-editable / unknown root. Requires an editable member (a consumed dep/discover rejects)."

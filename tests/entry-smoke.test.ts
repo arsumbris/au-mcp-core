@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-// Smoke test for the generated tool entries (Phase-3 review follow-up, plan 2608261532).
+// Smoke test for the generated tool entries.
 //
 // Each `src/tool-*.ts` is a thin entry: `createPlugin(ctx) -> { invoke }`, where invoke comes
 // from a factory called with the tool's HARDCODED id (e.g. `engineReadInvoke('mcp.au_anchors', …)`).
@@ -22,7 +22,7 @@ declare global {
 // answers `Error: unknown <kind> tool: <id>`. So we invoke and assert we did NOT hit that
 // signature; a validation / engine-down error is fine (the id resolved, the real tool ran).
 // NOTE: the def's `entry:` pointer (def -> this file) is NOT covered here — that binds at live
-// discovery, which the plan's Phase-6 daemon verify checks.
+// discovery, which a live daemon run checks.
 
 const entries = import.meta.glob('../src/tool-*.ts')
 

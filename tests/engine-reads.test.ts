@@ -1,5 +1,5 @@
 // Engine-read plugins (mcp.au_*) — MOVED verbatim from au-mcp's plugins.test.ts as the tools
-// migrated to au-mcp-core (plan 2608261532 Phase 3). Bodies are unchanged: engine-reads.ts still
+// migrated to au-mcp-core. Bodies are unchanged: engine-reads.ts still
 // exports engineTools(), so the tests exercise the same closures; only the broker type is now the
 // SDK's PluginBroker (was au-mcp's EngineBroker), and the mock socketPath excess-props are dropped.
 
@@ -14,7 +14,7 @@ describe('engine-read plugins', () => {
     read: read ?? (async (op) => ({ type: 'response', ready: true, result: { op } })),
   })
 
-  it('are ALWAYS registered — advertisement is decoupled from engine availability at startup (P7-O4)', () => {
+  it('are ALWAYS registered — advertisement is decoupled from engine availability at startup', () => {
     // The old gate omitted the whole set when the engine socket was absent at startup,
     // so a startup race permanently hid every au_* tool. Now they always register.
     const ids = engineTools(fakeBroker(false)).map((p) => p.manifest.id)
@@ -77,7 +77,7 @@ describe('engine-read plugins', () => {
     })
   })
 
-  // P6-O10: a non-instance is disambiguated via resolve_target.kind (a type-def is not a plain note).
+  // A non-instance is disambiguated via resolve_target.kind (a type-def is not a plain note).
   const brokerKind = (resolvedResult: unknown, kind: string): PluginBroker => ({
     available: () => true,
     mutate: async () => ({}),

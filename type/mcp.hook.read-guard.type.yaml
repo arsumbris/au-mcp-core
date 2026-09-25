@@ -1,8 +1,8 @@
-# read-guard — the read-before-write floor, as a loadable mediator (plan 2608261532, Phase 5.1).
+# read-guard — the read-before-write floor, as a loadable mediator.
 #
 # Migrated verbatim-in-behavior from the au-mcp kernel literal (`readBeforeWriteMediator`). It is
 # now a TRUE plugin over the SDK contract: it reads the session's read-time hash from
-# `MediationContext.readHash` (the Phase-4 accessor) instead of a daemon-injected `readView` map,
+# `MediationContext.readHash` instead of a daemon-injected `readView` map,
 # and the current on-disk hash from the always-granted read-only `MediationContext.broker`. So a
 # user could rebuild this exact floor over the same public handles — the invariant of decision
 # 2608261517.

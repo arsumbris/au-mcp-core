@@ -1,8 +1,8 @@
-// The read-before-write guard — a loadable MEDIATOR floor (plan 2608261532, Phase 5.1).
+// The read-before-write guard — a loadable MEDIATOR floor.
 //
 // Migrated from the au-mcp kernel literal. Behavior is UNCHANGED; the only difference is the
 // source of its two per-session inputs, now the public SDK contract instead of daemon privilege:
-//  - the read-time hash comes from `MediationContext.readHash(path)` (Phase-4 accessor), not a
+//  - the read-time hash comes from `MediationContext.readHash(path)`, not a
 //    daemon-injected `readView` map.
 //  - the current on-disk hash comes from the always-granted read-only `MediationContext.broker`
 //    (`content` read), not a closed-over `EngineBroker`.

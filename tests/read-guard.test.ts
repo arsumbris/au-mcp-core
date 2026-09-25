@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { readBeforeWriteDecide } from '../src/read-guard.ts'
 import type { MediationContext, PluginBroker, PendingAction, Decision } from '@arsumbris/au-mcp-sdk'
 
-// The read-before-write guard as a loadable plugin (plan 2608261532, Phase 5.1). It reads the
-// read-time hash from ctx.readHash (Phase-4 accessor) and the current hash from ctx.broker — so
+// The read-before-write guard as a loadable plugin. It reads the
+// read-time hash from ctx.readHash and the current hash from ctx.broker — so
 // these tests drive the decide over a mock MediationContext, seeding the read-view and the broker's
 // `content` reply, rather than injecting a readView map + currentHash resolver (the kernel form).
 
@@ -67,7 +67,7 @@ describe('read-before-write guard (loadable)', () => {
     expect(ctx.denials).toHaveLength(1) // the deny is recorded through the bus (tool_denied)
   })
 
-  it('ALLOWS creating a new file (target does not exist — no clobber, no prior read needed) — P7-O9', async () => {
+  it('ALLOWS creating a new file (target does not exist — no clobber, no prior read needed)', async () => {
     const decide = decideWith(() => false)
     const d = await decide(write('/ws/type/note.type.yaml'), fakeCtx(new Map(), null))
     expect(d.kind).toBe('allow')

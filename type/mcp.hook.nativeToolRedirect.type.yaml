@@ -1,5 +1,5 @@
 # redirect — the native-tool allowlist enforcer, as a loadable mcp.hook mediator
-# (plan 2608261532, Phase 5.3). Migrated from au-mcp-redirect, which retires.
+# Migrated from au-mcp-redirect, which retires.
 #
 # Reads MediationContext.launch.nativeToolAllowlist — the tri-state native whitelist:
 #  - absent -> INERT (all native tools allowed; the hard default).

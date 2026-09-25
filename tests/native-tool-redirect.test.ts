@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { redirectDecide } from '../src/native-tool-redirect.ts'
 import type { MediationContext, NativeTool, PendingAction, Decision } from '@arsumbris/au-mcp-sdk'
 
-// The redirect (native-tool allowlist) plugin as a loadable mediator (plan 2608261532, Phase 5.3).
+// The redirect (native-tool allowlist) plugin as a loadable mediator.
 // It reads ctx.launch.nativeToolAllowlist (the tri-state whitelist) + ctx.nativeTools, so these
 // tests drive the decide over a mock MediationContext. A TRUE whitelist: nothing is implicitly
 // allowed, and the gate tools stay available (they are the gate, not natives).

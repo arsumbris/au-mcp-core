@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the dependency repo name to remove from this repo's deps: (matched by name).
+  name: String
+  #: the editable member root to author; omit to author the served entry's repo.yaml.
+  root?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-remove-dep.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Remove a dependency from a repo's .arsumbris/repo.yaml (the deps: manifest), matched by name. The dual of add_dep; rebuilds the same way (an identity change). A byte-splice — siblings + comments survive, a sole entry collapses deps: to []. root names the editable member to author (omit for the served entry). Rejects an absent name or a non-editable / unknown root. Requires an editable member (a consumed dep/discover rejects)."

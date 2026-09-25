@@ -1,8 +1,8 @@
 // Host-relay intent tools — the agent-facing surface over au-host's `intent` vocab.
 //
 // A GENERIC PAIR, not one tool per intent (decision 2607110102):
-//   - au_host_intent_fire  — fire an intent into the live composition (this file, Phase 2).
-//   - au_host_intent_list — the catalog + live handled set (Phase 3).
+//   - au_host_intent_fire  — fire an intent into the live composition (this file).
+//   - au_host_intent_list — the catalog + live handled set.
 // Intents are DISCOVERED via the engine type graph (`subtypes('intent')` / `type`),
 // not the socket. The host socket carries only the fire + introspect commands.
 //

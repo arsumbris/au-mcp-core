@@ -4,13 +4,18 @@
 // type and inject a notice when the count exceeds the threshold. Recomputed per session against
 // LIVE graph state (unlike a static mcp.inject). INERT until configured — no config, no inject.
 //
+// The count comes from `instance_counts` — the cheap count-DUAL of `instances_of` — not from
+// fetching the `instances_of` LIST and taking its length: we want a count, so we read the count,
+// never materializing the matching instance rows (with their full fields) just to discard them.
+// See [[message - 260922182442 - instance_counts origins arg adopt for count-only reads::au-harness]].
+//
 // Config is TYPED, not an untyped JSON blob (decision 2609021429, fields-are-config). The def's
 // fields ARE the config; the daemon reads the active agent-profile's `hookConfig` from the graph,
 // runs this hook ONCE PER configured instance, and passes that instance's typed fields as `config`.
 // The config type (`McpHookInstanceCountNotice`) is GENERATED from the def by au-type-codegen
 // (`npm run gen:types`) — the def is the single source of truth, no hand-written interface or
 // validator. `forType` is a `type*` def-ref: the engine validates it names a real type, and it rides
-// the wire as a wikilink this hook reduces to the bare name for `instances_of`.
+// the wire as a wikilink this hook reduces to the bare name matched against the counts table.
 
 import type { PluginContext, PluginRuntime, SessionStartContext, SessionStartResult } from '@arsumbris/au-mcp-sdk'
 import type { McpHookInstanceCountNotice } from './generated.ts'
@@ -28,9 +33,26 @@ function readConfig(config: unknown): Config | undefined {
 }
 
 /** A `type*` def-ref value is a wikilink (`[[task::repo]]`, plus optional `#head` / `^id` fragments);
- *  reduce it to the bare type name `instances_of` wants. A bare value passes through unchanged. */
+ *  reduce it to the bare type name the counts table is keyed by. A bare value passes through unchanged. */
 function typeName(forType: string): string {
   return forType.trim().replace(/^\[\[/, '').replace(/\]\]$/, '').split('::')[0].split('#')[0].split('^')[0].trim()
+}
+
+/** One `instance_counts` `by_type` row (the two fields we read). */
+interface TypeCountRow {
+  name?: unknown
+  count?: unknown
+}
+
+/** Sum the counts of every identity sharing this bare `name`. `instance_counts` is IDENTITY-keyed
+ *  (`(name, hash)`), so one bare type name can span several cross-repo identities — exactly the set a
+ *  bare `instances_of {type}` matched. Summing their counts recovers that bare count. */
+function countFor(byType: TypeCountRow[], type: string): number {
+  let count = 0
+  for (const r of byType) {
+    if (r.name === type && typeof r.count === 'number') count += r.count
+  }
+  return count
 }
 
 /** Render the notice, expanding the optional placeholders. */
@@ -53,12 +75,18 @@ export function createPlugin(_ctx: PluginContext): PluginRuntime {
       const type = typeName(cfg.forType)
       let frame
       try {
-        frame = await broker.read('instances_of', { type })
+        // No `origins` -> all three site kinds (file+nested+meta), matching the pre-swap
+        // `instances_of {type}` default (all origins since schema 13). The default includes type-def
+        // `meta` annotations; pass `origins: ['file', 'nested']` here if a meta-free count is wanted.
+        frame = await broker.read('instance_counts', {})
       } catch {
         return // an engine hiccup -> no inject, never the session
       }
-      if (frame.ready === false || frame.type === 'error') return // not ready / unknown type
-      const count = Array.isArray(frame.result) ? frame.result.length : 0
+      if (frame.ready === false || frame.type === 'error') return // not ready / erroring
+      const view = frame.result as { by_type?: unknown } | null
+      const byType = Array.isArray(view?.by_type) ? (view.by_type as TypeCountRow[]) : []
+      // An absent type simply has no `by_type` row -> count 0 -> no inject (was: an engine error).
+      const count = countFor(byType, type)
       return count > cfg.threshold ? { inject: [render(cfg, type, count)] } : undefined
     },
   }

@@ -17,7 +17,7 @@ const row = (path: string, fields: unknown = { big: 'x'.repeat(1000) }): Instanc
   fields,
 })
 
-describe('governInstances (P6-O7)', () => {
+describe('governInstances', () => {
   it('defaults to an INDEX — drops fields, keeps path/claim + the schema-6 identity', () => {
     const out = governInstances([row('/a'), row('/b')])
     expect(out.count).toBe(2)

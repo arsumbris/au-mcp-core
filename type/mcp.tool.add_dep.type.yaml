@@ -1,0 +1,18 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the dependency repo name to add to this repo's deps: (a peer, resolved via the registry).
+  name: String
+  #: git remote of the dependency; omit for a local/registry-resolved peer.
+  remote?: String
+  #: git ref (branch / tag / sha) to pin; omit for the default.
+  ref?: String
+  #: the editable member root to author; omit to author the served entry's repo.yaml.
+  root?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-add-dep.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Add a dependency to a repo's .arsumbris/repo.yaml (the deps: manifest), the governed path to declare a cross-repo type peer. Does NOT fetch: the new peer stays peer-unmounted until a resolve. remote / ref pin the source (omit both for a registry-resolved local peer); root names the editable member to author (omit for the served entry). A byte-splice — comments + ordering survive. Rejects a duplicate name or a non-editable / unknown root. Requires an editable member (a consumed dep/discover rejects)."

@@ -16,7 +16,7 @@
 // operations/) stays as a pre-check on writes.
 //
 // Tool descriptions + advertised input schemas (JSON Schema) belong to the
-// MCP-server shim (Phase 5) and au-type-codegen; they are not on the manifest yet.
+// MCP-server shim and au-type-codegen; they are not on the manifest yet.
 
 import { readFile, glob, stat } from 'node:fs/promises'
 import { execFile } from 'node:child_process'
@@ -90,7 +90,7 @@ const BASH_STUB_MESSAGE = [
 // (the default). Declared at the DEFINITION site below (the `MUTATORS`/`READERS` sets over the
 // tool OBJECTS, not a downstream verb-name table), it rides the manifest so a mediator can
 // classify "does this action mutate?" at decide — see MediationContext.accessOf.
-function callable(id: string, name: string, invoke: (input: unknown) => Promise<CallableResult>): Plugin {
+export function callable(id: string, name: string, invoke: (input: unknown) => Promise<CallableResult>): Plugin {
   return { manifest: { id, name, kind: 'tool', contractVersion: 0, access: 'none' }, invoke }
 }
 
@@ -99,7 +99,7 @@ function callable(id: string, name: string, invoke: (input: unknown) => Promise<
  * input path when it has one; for a verb with no input file path (`rename_type`, whose def-file
  * location the engine derives) pass `undefined` and the engine's `result.path` is used instead.
  */
-function mutationResult(
+export function mutationResult(
   workspace: string,
   frame: EngineFrame,
   absPath: string | undefined,
@@ -107,7 +107,7 @@ function mutationResult(
   opts?: { access?: FileAccess; from?: string },
 ): CallableResult {
   // A reject is an `error` frame (e.g. expected_hash mismatch, stale old_string).
-  // Surfacing its message verbatim keeps the gate's voice the engine's (also P6-O9).
+  // Surfacing its message verbatim keeps the gate's voice the engine's.
   if (frame.type === 'error' || frame.ready === false) {
     const msg =
       (typeof frame.message === 'string' && frame.message) ||
@@ -560,8 +560,8 @@ export function fileTools(workspace: string, broker?: PluginBroker): Plugin[] {
 
   // SIGNAL-CAPTURING STUB ([[decision - 2606250955 ...]]). Still advertised, so the
   // reach + the attempted `command` are captured as a `toolCall(bash)` in the trace.
-  // It does NOT execute (no child_process) — closes the escape hatch (P7-O5) + the
-  // main roaming vector (P7-O6) and harvests the demand signal. Returns `ok` so the
+  // It does NOT execute (no child_process) — closes the escape hatch + the
+  // main roaming vector and harvests the demand signal. Returns `ok` so the
   // agent gets guidance, not a hard failure to loop on.
   const bashTool = callable('mcp.bash', 'Bash', async (_input) => ok(BASH_STUB_MESSAGE))
 

@@ -1,0 +1,14 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the member repo name to remove from the workspace composition.
+  name: String
+  #: the editable member root to author; omit to author the served entry's workspace.yaml.
+  root?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-remove-workspace-member.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Remove a member from whichever of edit: / discover: holds it in .arsumbris/workspace.yaml. The dual of add_workspace_member — a byte-splice with comments preserved. root names the editable member to author (omit for the served entry). Rejects an absent member or a non-editable / unknown root. Requires an editable member (a consumed dep/discover rejects)."

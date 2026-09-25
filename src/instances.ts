@@ -1,4 +1,4 @@
-// au_instances_of governor (P6-O7).
+// au_instances_of governor.
 //
 // The engine's `instances_of` returns every matching instance WITH its full `fields`
 // (the frontmatter map). For an append-only type like `session-log` (whose instances

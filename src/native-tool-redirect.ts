@@ -1,8 +1,8 @@
 // The redirect mediator — the native-tool allowlist enforcer, a loadable MEDIATOR
-// floor (plan 2608261532, Phase 5.3). Migrated from au-mcp-redirect.
+// floor. Migrated from au-mcp-redirect.
 //
 // It reads the session's native-tool whitelist from MediationContext.launch.nativeToolAllowlist
-// (the Phase-5.3 field), instead of the daemon-injected flag-and-allowlist pair. So it is a TRUE
+// instead of the daemon-injected flag-and-allowlist pair. So it is a TRUE
 // plugin over the SDK contract (decision 2608261517): a user could rebuild it over the same handle.
 //
 // A TRUE WHITELIST, no exceptions:

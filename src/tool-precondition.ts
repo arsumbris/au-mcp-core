@@ -1,4 +1,4 @@
-// The tool-precondition guard — a loadable MEDIATOR floor (plan 2608261532, Phase 5.2).
+// The tool-precondition guard — a loadable MEDIATOR floor.
 //
 // Gates a gate-tool call on the agent having READ the file(s) that tool declares as a
 // read-precondition (`read-precondition-meta { onFiles: [[guide]] }` on the tool's own `mcp.tool`
@@ -7,7 +7,7 @@
 //
 // Migrated from au-mcp-redirect. The behavior is unchanged; the two per-session inputs now come
 // from the public SDK contract instead of daemon privilege (decision 2608261517):
-//  - the read/served view: `MediationContext.hasRead(path)` (the Phase-4 accessor), not a
+//  - the read/served view: `MediationContext.hasRead(path)`, not a
 //    daemon-injected `hasRead` closure.
 //  - the preconditions map: DERIVED here from the read-only broker (G2), not handed over from the
 //    daemon `registry`. The floor enumerates `mcp.tool` subtypes, reads each

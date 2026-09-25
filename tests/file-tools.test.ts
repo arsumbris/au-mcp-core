@@ -1,5 +1,5 @@
-// File-op plugins — MOVED from au-mcp's plugins.test.ts as the file tools migrated to au-mcp-core
-// (plan 2608261532 Phase 3). Bodies unchanged (file-tools.ts still exports fileTools()); the broker
+// File-op plugins — MOVED from au-mcp's plugins.test.ts as the file tools migrated to au-mcp-core.
+// Bodies unchanged (file-tools.ts still exports fileTools()); the broker
 // type is the SDK's PluginBroker (was EngineBroker), socketPath mock props dropped. The three shared
 // helpers (tempWorkspace / invokeOf / contentBroker) are copied here — they stay in au-mcp too, used
 // by the daemon-loads + intent test blocks that remain there.

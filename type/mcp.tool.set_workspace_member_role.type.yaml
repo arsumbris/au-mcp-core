@@ -1,0 +1,16 @@
+extends: mcp.tool::au-mcp-sdk
+fields:
+  #: the member repo name whose role to change.
+  name: String
+  #: the TARGET list — "edit" (an editable authoring surface) or "discover" (mounted for type-discovery, consumed).
+  role: String
+  #: the editable member root to author; omit to author the served entry's workspace.yaml.
+  root?: String
+meta:
+  - type: plugin-runtime-meta::au-mcp-sdk
+    entry: ./src/tool-set-workspace-member-role.ts
+    contractVersion: 0
+  - type: tool-access-meta::au-mcp-sdk
+    broker: read-write
+  - type: tool-presentation-meta::au-mcp-sdk
+    description: "Move a member between edit: and discover: in one commit in .arsumbris/workspace.yaml (role is the TARGET list, \"edit\" | \"discover\"). The role-change verb add_workspace_member's duplicate reject points at. root names the editable member to author (omit for the served entry). Rejects an absent member, a member already in the target role, the containing repo into discover, or a non-editable / unknown root. Requires an editable member (a consumed dep/discover rejects)."

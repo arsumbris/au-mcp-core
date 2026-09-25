@@ -1,5 +1,5 @@
 # tool-precondition — the read-precondition floor, as a loadable mcp.hook mediator
-# (plan 2608261532, Phase 5.2). Migrated from au-mcp-redirect (where it lived beside the native-tool redirect).
+# Migrated from au-mcp-redirect (where it lived beside the native-tool redirect).
 #
 # A tool declares `read-precondition-meta { onFiles: [[guide]] }` on its own `mcp.tool` subtype.
 # This floor gates a gate-tool call on the agent having READ (or been SERVED) every declared file.
@@ -12,7 +12,7 @@
 # required-paths map from the read-only broker — enumerate `mcp.tool` subtypes, read each
 # `read-precondition-meta.onFiles`, resolve each wikilink via `resolve_target` — exactly as an
 # external user would. Nothing is handed to it that a user plugin cannot fetch. It reads the
-# session read/served view via `MediationContext.hasRead` (the Phase-4 accessor).
+# session read/served view via `MediationContext.hasRead`.
 #
 # A HOOK (shape mediator): no fields, no agent-facing surface. Uses the decide-time read-only
 # broker (so no `tool-access-meta`) + the workspace captured at construction. `critical: true` —

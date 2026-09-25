@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { toolPreconditionDecide, derivePreconditions } from '../src/tool-precondition.ts'
 import type { MediationContext, PluginBroker, Decision } from '@arsumbris/au-mcp-sdk'
 
-// The tool-precondition floor as a loadable plugin (plan 2608261532, Phase 5.2). Migrated from
-// au-mcp-redirect. It reads the session read/served view from ctx.hasRead (Phase-4 accessor) and
+// The tool-precondition floor as a loadable plugin. Migrated from
+// au-mcp-redirect. It reads the session read/served view from ctx.hasRead and
 // DERIVES its own preconditions map from the broker (G2) — so these tests drive the decide with an
 // injected `derive` (a fixed map) over a mock MediationContext, and separately exercise the real
 // `derivePreconditions` against a mock broker.

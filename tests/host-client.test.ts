@@ -1,4 +1,4 @@
-// Phase 1 of [[plan - 2607141759 - build the au-mcp host-relay client and generic
+// Per [[plan - 2607141759 - build the au-mcp host-relay client and generic
 // intent surface over au-host intent subtypes]]: prove the host-relay client in
 // isolation — framing round-trip, id correlation, ok:false surfacing, transport
 // failure — against a FAKE in-process socket server. No au-host app needed.

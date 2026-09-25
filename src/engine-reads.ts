@@ -1,9 +1,9 @@
 // First-party engine-read callable plugins (mcp.au_*), ported from old au-mcp
 // `src/tools/engine.ts`. Each reads the typed knowledge base THROUGH the daemon's broker
-// (P7) — never its own socket. ALWAYS registered (not gated on engine-availability
+// — never its own socket. ALWAYS registered (not gated on engine-availability
 // at daemon startup): advertisement must not depend on whether the engine socket
 // happened to exist the instant the daemon started — that one-time check made a
-// startup race silently hide every au_* tool for the daemon's whole life (P7-O4).
+// startup race silently hide every au_* tool for the daemon's whole life.
 // Each read fails GRACEFULLY at call time when the engine is unreachable.
 
 import { basename, relative } from 'node:path'
@@ -14,7 +14,7 @@ import { ok, fail, optString, optNumber, optBool, ENGINE_DOWN_HINT, engineDown }
 import { governInstances, governAllInstances } from './instances.ts'
 
 /**
- * A path's engine classification via `resolve_target.kind` (P6-O10), or null. Lets
+ * A path's engine classification via `resolve_target.kind`, or null. Lets
  * au_typed distinguish a `type-def` from a plain note (`unclassified`) — both of which
  * the `resolved` read returns null for. `resolve_target`'s `target` is REPO-RELATIVE
  * (an absolute path resolves to null), so relativize against the workspace (the entry root).
@@ -142,7 +142,7 @@ async function readTypeSystem(broker: PluginBroker, input: unknown): Promise<Cal
 
   // full:true → the whole conceptual bundle: moc first, then every atom EXCEPT the moc and the
   // diagnostic-codes catalog (reference-only, ~2600 lines — looked up per-name when an error
-  // fires; inlining it overflows the tool-result cap, P6-O7). Assembled from per-atom reads.
+  // fires; inlining it overflows the tool-result cap). Assembled from per-atom reads.
   if (optBool(input, 'full') === true) {
     const parts: string[] = []
     const mocPath = byName.get(TS_MOC_NAME)
@@ -224,7 +224,7 @@ function lineSnippet(content: string, span: SpanLike): string | undefined {
 /**
  * The engine-read tools. ALWAYS registered — advertisement is decoupled from whether
  * the engine was reachable at daemon startup (the old `if (!broker.available()) return []`
- * gate made a startup race permanently hide every au_* tool — P7-O4). Each read fails
+ * gate made a startup race permanently hide every au_* tool). Each read fails
  * gracefully at call time (readTool + the inline callers catch a down engine).
  */
 export function engineTools(broker: PluginBroker, workspace?: string): Plugin[] {
@@ -279,7 +279,7 @@ export function engineTools(broker: PluginBroker, workspace?: string): Plugin[] 
 
     callable('mcp.au_type_system', 'Type-system reference (typed doc atoms)', (input) => readTypeSystem(broker, input)),
 
-    // Governed (P6-O7): the engine's instances_of returns full `fields` per instance,
+    // Governed: the engine's instances_of returns full `fields` per instance,
     // which overflows for append-only types (session-log: 171k). Default to an INDEX
     // (path+claim+the schema-6 identity: name/hash/owners/claimed/inherited) + paging;
     // `resolve:true` opts into full fields.
@@ -315,7 +315,7 @@ export function engineTools(broker: PluginBroker, workspace?: string): Plugin[] 
       },
     ),
 
-    // Governed like au_instances_of (P6-O7): the knowledge-base-wide `instances` read returns the FULL
+    // Governed like au_instances_of: the knowledge-base-wide `instances` read returns the FULL
     // per-instance introspection (effective_shape, collisions, effective_values, body_events, …),
     // which overflows even harder than instances_of's `fields`. Default to an INDEX
     // (file+claim+closure) + paging; `detail:true` opts into the full entries. `count` is the
@@ -343,8 +343,8 @@ export function engineTools(broker: PluginBroker, workspace?: string): Plugin[] 
 
     // Discoverability (5e/F3a): a lightweight "is this typed, and of what type?" probe so
     // the agent doesn't have to infer typed-ness from au_resolved returning null. Distills
-    // the `resolved` read (non-null carries the type claim) + `resolve_target.kind` (P6-O10:
-    // distinguishes a TYPE-DEF from a plain note, both of which `resolved` returns null for).
+    // the `resolved` read (non-null carries the type claim) + `resolve_target.kind`, which
+    // distinguishes a TYPE-DEF from a plain note (`resolved` returns null for both).
     // NOT a standin: the engine already surfaces these facts; this shapes them for the agent.
     callable('mcp.au_typed', 'Engine: whether a path is a typed instance, a type-def, or a plain note', async (input) => {
       const path = optString(input, 'path')
